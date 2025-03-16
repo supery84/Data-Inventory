@@ -25,6 +25,7 @@ const data = [
     }
     // Tambahkan data lainnya di sini
   ];
+
   const tableBody = document.getElementById("dataTable");
 const searchInput = document.getElementById("searchInput");
 const pagination = document.getElementById("pagination");
@@ -108,3 +109,21 @@ searchInput.addEventListener("input", function() {
 // Inisialisasi
 renderTable(currentPage);
 renderPagination();
+// Inisialisasi
+renderTable(currentPage);
+renderPagination();
+// Fungsi untuk memperbarui jam digital setiap detik
+function updateClock() {
+  const clockElement = document.getElementById('clock');
+  if (!clockElement) return; // Pastikan elemen ada
+
+  const now = new Date();
+  let hours = now.getHours().toString().padStart(2, '0');
+  let minutes = now.getMinutes().toString().padStart(2, '0');
+  let seconds = now.getSeconds().toString().padStart(2, '0');
+
+  clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+}
+
+// Jalankan fungsi setiap detik
+setInterval(updateClock, 1000);
