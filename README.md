@@ -283,6 +283,8 @@
                 flex-direction: column;
                 gap: 5px;
             }
+
+            
         }
     </style>
 </head>
@@ -294,26 +296,41 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
+
+
     <div class="collapse navbar-collapse" id="mainNavbar">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        
+        
         <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
         <li class="nav-item"><a class="nav-link" href="#filemanager">File Manager</a></li>
       </ul>
+      
       <a href="#" class="btn btn-outline-primary btn-sm ms-2">Login</a>
       <a href="#" class="btn btn-primary btn-sm ms-2">Sign Up</a>
     </div>
   </div>
 </nav>
 
+
+
 <!-- Hero Section -->
 <section class="hero-section" id="hero">
-  <div>
+      <div>
+        <!-- Digital Clock -->
+<div id="digitalClock"></div>
     <h1 class="display-4 fw-bold mb-3">Manage Your Excel Files Easily</h1>
     <p class="lead mb-4">Upload, organize, and edit your Excel data in one modern dashboard.</p>
     <a href="#filemanager" class="btn btn-lg btn-light fw-bold px-4 py-2 me-2">Get Started</a>
     <a href="#features" class="btn btn-outline-light btn-lg px-4 py-2">Learn More</a>
   </div>
+
+
+</div>
+</div>
+</nav>
+
 </section>
 
 <!-- Features Section -->
@@ -887,9 +904,26 @@ document.getElementById('closeFolderBtn').addEventListener('click', function() {
     updateEmptyState();
 });
 initDB();
+
+// Digital Clock Script
+function updateDigitalClock() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    const timeString = `${hours}:${minutes}:${seconds}`;
+    const clock = document.getElementById('digitalClock');
+    if (clock) {
+        clock.textContent = timeString;
+    }
+}
+setInterval(updateDigitalClock, 1000);
+updateDigitalClock(); // initial call
+
 </script>
 </body>
 </html>
+
 
 
 
