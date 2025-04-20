@@ -1,927 +1,745 @@
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel File Manager Pro</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-color: #6a11cb;
-            --light-color: #f8f9fa;
-            --dark-color: #343a40;
-        }
-        body {
-            background: var(--gradient-bg);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--dark-color);
-        }
-        .navbar {
-            box-shadow: 0 2px 8px rgba(102,126,234,0.07);
-        }
-        .hero-section {
-            min-height: 55vh;
-            background: linear-gradient(90deg,#667eea,#764ba2);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .hero-section h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-        .main-container {
-            background: rgba(255, 255, 255, 0.97);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            margin-top: 2rem;
-            padding: 2rem;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-        }
-        .main-container:hover {
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        }
-        .folder-sidebar {
-            border-right: 2px solid rgba(0,0,0,0.05);
-            min-height: 80vh;
-            padding-right: 1.5rem;
-            position: relative;
-        }
-        .folder-item {
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer;
-            position: relative;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            border-radius: 10px;
-            background-color: rgba(248, 249, 250, 0.7);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .folder-item:hover {
-            background-color: rgba(102, 126, 234, 0.1);
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .active-file {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color))!important;
-            color: white!important;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4)!important;
-        }
-        .search-box {
-            border-radius: 30px;
-            padding: 12px 25px;
-            transition: all 0.3s ease;
-            border: 2px solid rgba(0,0,0,0.1);
-            background-color: rgba(248, 249, 250, 0.8);
-        }
-        .search-box:focus {
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
-            border-color: var(--primary-color);
-            background-color: white;
-        }
-        #excelTable {
-            display: none;
-            margin-top: 1.5rem;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        #excelTable thead th {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            padding: 15px;
-        }
-        #excelTable tbody tr {
-            transition: all 0.2s ease;
-        }
-        #excelTable tbody tr:hover {
-            background-color: rgba(102, 126, 234, 0.05);
-            transform: translateY(-1px);
-        }
-        .delete-folder-btn {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0;
-            transition: all 0.3s ease;
-            padding: 5px 10px;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .folder-item:hover .delete-folder-btn {
-            opacity: 0.7;
-        }
-        .folder-item:hover .delete-folder-btn:hover {
-            opacity: 1;
-            background-color: rgba(220, 53, 69, 0.2);
-        }
-        .close-folder-btn {
-            margin-left: 15px;
-            padding: 8px 20px;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .close-folder-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .upload-section {
-            position: relative;
-            overflow: hidden;
-            border-radius: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        .upload-section:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        .upload-section label {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .upload-section label:hover {
-            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
-        }
-        .badge-count {
-            background-color: rgba(255,255,255,0.2);
-            color: white;
-            font-weight: 500;
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-        .active-file .badge-count {
-            background-color: rgba(255,255,255,0.3);
-        }
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .action-btn {
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        .modal-content {
-            border-radius: 15px;
-            overflow: hidden;
-            border: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .modal-header {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-        }
-        .modal-footer {
-            border: none;
-            background-color: #f8f9fa;
-        }
-        #progressModal .progress {
-            height: 25px;
-            border-radius: 12px;
-        }
-        #progressModal .progress-bar {
-            transition: width 0.3s ease;
-        }
-        #newFolderBtn {
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
-            transition: all 0.3s ease;
-        }
-        #newFolderBtn:hover {
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
-        }
-        h4 {
-            color: var(--secondary-color);
-            font-weight: 600;
-            position: relative;
-            display: inline-block;
-        }
-        h4:after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            border-radius: 3px;
-        }
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 0;
-            text-align: center;
-            color: #6c757d;
-        }
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #dee2e6;
-        }
-        .features-section .fa-2x {
-            font-size: 2.5rem;
-        }
-        .footer {
-            background: #232526;
-            color: #fff;
-        }
-        .footer a {
-            color: #bfc1c3;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            color: #fff;
-            text-decoration: underline;
-        }
-        @media (max-width: 768px) {
-            .hero-section h1 {
-                font-size: 2rem;
-            }
-            .main-container {
-                padding: 1.5rem;
-            }
-            .action-buttons {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Budget & Expenses</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- SheetJS untuk preview Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: 'Montserrat', Arial, sans-serif; margin: 0; background: #f8fafc; color: #222;}
+    header {
+      background: #2155cd; color: #fff; display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 2rem; position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-weight: bold; font-size: 1.5rem; letter-spacing: 2px; display: flex; align-items: center; gap: 8px;}
+    nav { display: flex; gap: 1.5rem; align-items: center;}
+    nav a { color: #fff; text-decoration: none; font-weight: 500; transition: color 0.2s;}
+    nav a:hover { color: #ffd700;}
+    .header-right { display: flex; align-items: center; gap: 1rem;}
+    .btn {
+      background: #ffd700; color: #2155cd; border: none; padding: 0.5rem 1.2rem; border-radius: 20px;
+      font-weight: bold; cursor: pointer; transition: background 0.2s;
+    }
+    .btn:hover { background: #fff; color: #2155cd;}
+    .social-icons a { color: #fff; margin-left: 8px; font-size: 1.2rem; text-decoration: none;}
+    .search-bar { display: none; margin-left: 1rem;}
+    .search-bar input { padding: 0.3rem 0.7rem; border-radius: 12px; border: none;}
+    .hero {
+      background: linear-gradient(90deg, #2155cd 70%, #ffd700 100%);
+      color: #fff; padding: 3rem 2rem 2rem 2rem; text-align: center; position: relative;
+    }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 0.6rem; font-weight: 700;}
+    .hero p { font-size: 1.2rem; margin-bottom: 1.2rem;}
+    .hero .btn { font-size: 1.1rem; margin: 0.3rem;}
+    .container { display: flex; gap: 2rem; max-width: 1200px; margin: 2rem auto; padding: 0 1rem;}
+    .main-content { flex: 3; min-width: 0;}
+    .sidebar {
+      flex: 1; background: #fff; border-radius: 16px; box-shadow: 0 2px 8px #0001; padding: 1.2rem;
+      margin-top: 1rem; min-width: 220px; max-width: 300px; height: fit-content;
+    }
+    .sidebar h3 { margin-top: 0; font-size: 1.1rem; color: #2155cd; margin-bottom: 0.7rem;}
+    .sidebar ul { list-style: none; padding: 0; margin: 0 0 1.2rem 0;}
+    .sidebar ul li { margin-bottom: 0.7rem;}
+    .sidebar ul li a { color: #2155cd; text-decoration: none; font-weight: 500; transition: color 0.2s;}
+    .sidebar ul li a:hover { color: #ffd700;}
+    .widget { margin-bottom: 1rem; font-size: 0.98rem;}
+    .features { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem;}
+    .feature-box {
+      background: #fff; padding: 1.2rem; border-radius: 14px; box-shadow: 0 2px 8px #0001;
+      flex: 1 1 220px; min-width: 220px; text-align: center;
+    }
+    .feature-box h4 { color: #2155cd; margin-bottom: 0.5rem;}
+    .chart-section {
+      background: #fff; border-radius: 16px; box-shadow: 0 2px 8px #0001; padding: 1.5rem; margin-bottom: 2rem;
+    }
+    .testimonials { margin-bottom: 2rem;}
+    .testimonial-slider { display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem;}
+    .testimonial-card {
+      background: #fff; border-radius: 14px; box-shadow: 0 2px 8px #0001; padding: 1rem;
+      min-width: 220px; max-width: 250px; text-align: center; flex-shrink: 0;
+    }
+    .testimonial-card img { width: 48px; height: 48px; border-radius: 50%; margin-bottom: 0.5rem;}
+    .testimonial-card p { font-size: 0.96rem; color: #333;}
+    .testimonial-card .name { font-weight: bold; margin-top: 0.5rem; color: #2155cd;}
+    .blog-section { margin-bottom: 2rem;}
+    .blog-list { display: flex; flex-wrap: wrap; gap: 1.2rem;}
+    .blog-card {
+      background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 1rem;
+      flex: 1 1 220px; min-width: 220px; max-width: 300px;
+    }
+    .blog-card h5 { margin: 0 0 0.5rem 0; color: #2155cd;}
+    .blog-card p { font-size: 0.95rem; color: #333;}
+    .form-section {
+      background: #fff; border-radius: 16px; box-shadow: 0 2px 8px #0001; padding: 1.5rem;
+      margin-bottom: 2rem; max-width: 400px;
+    }
+    .form-section h3 { margin-top: 0; color: #2155cd;}
+    .form-group { margin-bottom: 1rem;}
+    .form-group label { display: block; margin-bottom: 0.3rem; font-size: 0.97rem;}
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;
+    }
+    .form-group textarea { resize: vertical;}
+    .form-error { color: #d32f2f; font-size: 0.9rem; margin-bottom: 0.5rem;}
+    .cta-section { text-align: center; margin: 2rem 0;}
+    .cta-section .btn { font-size: 1.15rem; padding: 0.7rem 2rem; margin-top: 0.5rem;}
+    footer {
+      background: #2155cd; color: #fff; padding: 2rem 2rem 1rem 2rem; text-align: center; margin-top: 2rem;
+    }
+    .footer-links { margin-bottom: 1rem;}
+    .footer-links a { color: #ffd700; margin: 0 1rem; text-decoration: none; font-weight: 500;}
+    .footer-links a:hover { text-decoration: underline;}
+    .footer-social { margin-bottom: 1rem;}
+    .footer-social a { color: #fff; margin: 0 0.5rem; font-size: 1.3rem; text-decoration: none;}
+    .newsletter-signup input[type="email"] {
+      padding: 0.4rem 0.8rem; border-radius: 12px; border: none; margin-right: 0.3rem; font-size: 1rem;
+    }
+    #cookieConsent {
+      position: fixed; bottom: 0; left: 0; width: 100%; background: #333; color: #fff; text-align: center;
+      padding: 1rem 0.5rem; z-index: 1000; display: none;
+    }
+    #cookieConsent button {
+      background: #ffd700; color: #2155cd; border: none; border-radius: 10px; padding: 0.4rem 1.2rem;
+      margin-left: 1rem; cursor: pointer; font-weight: bold;
+    }
+    /* File Manager */
+    #filemanager-section { margin-bottom:2rem;}
+    #fileManagerTree ul { list-style:none; padding-left:1.2em;}#fileManagerTree li { margin-bottom:0.2em;}
+    #fileManagerTree span { cursor:pointer;}
+    /* Modal */
+    .modal-excel-preview {
+      position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:3000;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .modal-excel-preview-content {
+      background:#fff;max-width:90vw;max-height:90vh;overflow:auto;padding:2rem 1.5rem;border-radius:16px;position:relative;
+    }
+    .modal-excel-preview-content h3 { color:#2155cd; }
+    .modal-excel-preview-content button {
+      position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.4rem;cursor:pointer;
+    }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .container { flex-direction: column;}
+      .sidebar { margin-top: 0; margin-bottom: 1.5rem; max-width: 100%;}
+    }
+    @media (max-width: 700px) {
+      .features, .blog-list, .testimonial-slider { flex-direction: column;}
+      .main-content, .sidebar { min-width: 0; max-width: 100%;}
+      header { flex-direction: column; align-items: flex-start; padding: 1rem;}
+      nav { flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;}
+      .header-right { margin-top: 0.5rem;}
+      .search-bar { display: block; margin-top: 0.5rem;}
+    }
+  </style>
 </head>
 <body>
-<!-- Header/Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-2">
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <span>💰</span> Budget<span style="color:#ffd700;">&</span>Expenses
+    </div>
+    <nav>
+      <a href="#">Beranda</a>
+      <a href="#features">Fitur</a>
+      <a href="#chart">Statistik</a>
+      <a href="#filemanager-section">File Manager</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Kontak</a>
+    </nav>
+    <div class="header-right">
+      <button class="btn" onclick="showLoginForm()">Login / Signup</button>
+      <div class="social-icons">
+        <a href="#" title="Facebook">🌐</a>
+        <a href="#" title="Instagram">📸</a>
+      </div>
+      <div class="search-bar">
+        <input type="text" placeholder="Cari...">
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Kelola Budget & Expenses Anda dengan Mudah</h1>
+    <p>Pantau pemasukan dan pengeluaran, capai tujuan finansial Anda.</p>
+    <button class="btn" onclick="showSignupForm()">Mulai Sekarang</button>
+    <button class="btn" style="background:#fff;color:#2155cd;" onclick="window.location='#features'">Pelajari Lebih Lanjut</button>
+  </section>
+
+  <!-- File Manager Section -->
+  <section id="filemanager-section" style="background:#fff;border-radius:16px;box-shadow:0 2px 8px #0001;padding:1.5rem;margin:2rem 0;">
+    <h3 style="color:#2155cd;">File Manager</h3>
+    <div style="margin-bottom:1rem;">
+      <button class="btn" onclick="createFolder()">Buat Folder</button>
+      <label class="btn" style="margin-left:1rem;cursor:pointer;">
+        Upload File
+        <input type="file" id="fileInput" multiple style="display:none" onchange="uploadFiles(event)">
+      </label>
+      <label class="btn" style="margin-left:1rem;cursor:pointer;">
+        Upload Folder
+        <input type="file" id="folderInput" webkitdirectory directory multiple style="display:none" onchange="uploadFolder(event)">
+      </label>
+    </div>
+    <div id="fileManagerTree" style="font-size:1rem;"></div>
+  </section>
+
+  <!-- Main Content + Sidebar -->
   <div class="container">
-    <a class="navbar-brand fw-bold" href="#"><i class="fas fa-compass text-primary me-2"></i>ExcelFilePro</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Fitur -->
+      <section id="features" class="features">
+        <div class="feature-box">
+          <h4>Input & Tracking</h4>
+          <p>Catat pemasukan dan pengeluaran harian secara mudah dan cepat.</p>
+        </div>
+        <div class="feature-box">
+          <h4>Kategori Custom</h4>
+          <p>Buat kategori sesuai kebutuhan Anda, misal: Makan, Transportasi, Hiburan.</p>
+        </div>
+        <div class="feature-box">
+          <h4>Laporan Otomatis</h4>
+          <p>Dapatkan ringkasan keuangan bulanan dan tahunan secara otomatis.</p>
+        </div>
+        <div class="feature-box">
+          <h4>Grafik Interaktif</h4>
+          <p>Visualisasi budget & expenses dengan grafik bar, pie, dan line chart.</p>
+        </div>
+      </section>
 
+      <!-- Grafik Budget vs Expenses -->
+      <section id="chart" class="chart-section">
+        <h3 style="color:#2155cd;">Perbandingan Budget & Pengeluaran Bulanan</h3>
+        <canvas id="budgetExpensesChart" height="120"></canvas>
+      </section>
 
-    <div class="collapse navbar-collapse" id="mainNavbar">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        
-        
-        <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-        <li class="nav-item"><a class="nav-link" href="#filemanager">File Manager</a></li>
+      <!-- Testimoni -->
+      <section class="testimonials">
+        <h3 style="color:#2155cd;">Apa Kata Pengguna?</h3>
+        <div class="testimonial-slider">
+          <div class="testimonial-card">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User">
+            <p>"Semenjak pakai Budget&Expenses, keuangan pribadi saya jadi lebih terkontrol!"</p>
+            <div class="name">Rizky, Freelancer</div>
+          </div>
+          <div class="testimonial-card">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User">
+            <p>"Grafiknya sangat membantu untuk melihat pengeluaran terbesar setiap bulan."</p>
+            <div class="name">Nadia, Mahasiswi</div>
+          </div>
+          <div class="testimonial-card">
+            <img src="https://randomuser.me/api/portraits/men/55.jpg" alt="User">
+            <p>"Fitur kategorinya fleksibel, cocok untuk keluarga maupun bisnis kecil."</p>
+            <div class="name">Budi, Wirausaha</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blog/Artikel -->
+      <section id="blog" class="blog-section">
+        <h3 style="color:#2155cd;">Tips & Artikel Keuangan</h3>
+        <div class="blog-list">
+          <div class="blog-card">
+            <h5>5 Cara Efektif Mengatur Pengeluaran Bulanan</h5>
+            <p>Pelajari strategi sederhana agar pengeluaran tidak melebihi budget.</p>
+          </div>
+          <div class="blog-card">
+            <h5>Kenali Kategori Pengeluaran Terbesar Anda</h5>
+            <p>Analisa data dan temukan pos pengeluaran yang bisa dihemat.</p>
+          </div>
+          <div class="blog-card">
+            <h5>Manfaat Visualisasi Keuangan</h5>
+            <p>Bagaimana grafik membantu Anda mengambil keputusan finansial.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <h2>Siap Lebih Cerdas Kelola Uang?</h2>
+        <button class="btn" onclick="showSignupForm()">Daftar Sekarang</button>
+      </section>
+      <!-- Formulir Kontak -->
+      <section id="contact" class="form-section">
+        <h3>Hubungi Kami</h3>
+        <form id="contactForm" onsubmit="return validateContactForm()">
+          <div id="contactError" class="form-error"></div>
+          <div class="form-group">
+            <label for="contactName">Nama</label>
+            <input type="text" id="contactName" required>
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">Email</label>
+            <input type="email" id="contactEmail" required>
+          </div>
+          <div class="form-group">
+            <label for="contactMsg">Pesan</label>
+            <textarea id="contactMsg" rows="3" required></textarea>
+          </div>
+          <button class="btn" type="submit">Kirim</button>
+        </form>
+      </section>
+    </div>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h3>Menu Tambahan</h3>
+      <ul>
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Kategori Pengeluaran</a></li>
+        <li><a href="#">Laporan</a></li>
+        <li><a href="#">Pengaturan</a></li>
       </ul>
-      
-      <a href="#" class="btn btn-outline-primary btn-sm ms-2">Login</a>
-      <a href="#" class="btn btn-primary btn-sm ms-2">Sign Up</a>
-    </div>
-  </div>
-</nav>
-
-
-
-<!-- Hero Section -->
-<section class="hero-section" id="hero">
-      <div>
-        <!-- Digital Clock -->
-<div id="digitalClock"></div>
-    <h1 class="display-4 fw-bold mb-3">Manage Your Excel Files Easily</h1>
-    <p class="lead mb-4">Upload, organize, and edit your Excel data in one modern dashboard.</p>
-    <a href="#filemanager" class="btn btn-lg btn-light fw-bold px-4 py-2 me-2">Get Started</a>
-    <a href="#features" class="btn btn-outline-light btn-lg px-4 py-2">Learn More</a>
-  </div>
-
-
-
-
-</section>
-
-<!-- Features Section -->
-<section id="features" class="features-section py-5 bg-light">
-  <div class="container">
-    <div class="row text-center">
-      <div class="col-md-4 mb-4">
-        <i class="fas fa-folder-open fa-2x text-primary mb-3"></i>
-        <h5>Folder Management</h5>
-        <p>Buat dan kelola folder untuk mengorganisasi file Excel Anda.</p>
+      <div class="widget">
+        <strong>Saldo Bulan Ini:</strong>
+        <div id="saldoSidebar">Rp 1.200.000</div>
       </div>
-      <div class="col-md-4 mb-4">
-        <i class="fas fa-edit fa-2x text-primary mb-3"></i>
-        <h5>Edit Excel Online</h5>
-        <p>Edit data langsung di browser dengan tampilan modern.</p>
+      <div class="widget">
+        <strong>Kalender:</strong>
+        <div id="calendarWidget"></div>
       </div>
-      <div class="col-md-4 mb-4">
-        <i class="fas fa-cloud-upload-alt fa-2x text-primary mb-3"></i>
-        <h5>Secure Upload</h5>
-        <p>Upload file Excel dengan progress bar dan keamanan data.</p>
+      <div class="widget">
+        <strong>Ikuti Kami:</strong>
+        <div>
+          <a href="#">🌐</a>
+          <a href="#">📸</a>
+        </div>
       </div>
+    </aside>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="#">Tentang Kami</a> |
+      <a href="#contact">Kontak</a> |
+      <a href="#">Kebijakan Privasi</a>
+    </div>
+    <div class="footer-social">
+      <a href="#">🌐</a>
+      <a href="#">📸</a>
+    </div>
+    <div class="newsletter-signup">
+      <form onsubmit="return subscribeNewsletter(event)">
+        <input type="email" id="newsletterEmail" placeholder="Email Anda" required>
+        <button class="btn" type="submit">Langganan</button>
+      </form>
+    </div>
+    <div style="margin-top:1rem;font-size:0.95rem;">&copy; 2024 Budget & Expenses. All rights reserved.</div>
+  </footer>
+
+  <!-- Cookie Consent -->
+  <div id="cookieConsent">
+    Situs ini menggunakan cookie untuk meningkatkan pengalaman Anda. <button onclick="acceptCookies()">Saya Setuju</button>
+  </div>
+
+  <!-- Login/Signup Modal (Sederhana) -->
+  <div id="loginModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:2000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2rem 1.5rem;border-radius:16px;max-width:350px;width:90%;position:relative;">
+      <button onclick="closeLoginForm()" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.4rem;cursor:pointer;">&times;</button>
+      <h3 style="color:#2155cd;">Login / Signup</h3>
+      <form id="loginForm" onsubmit="return validateLoginForm()">
+        <div id="loginError" class="form-error"></div>
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <button class="btn" type="submit">Masuk</button>
+      </form>
+      <div style="margin-top:1rem;font-size:0.96rem;">Belum punya akun? <a href="#" onclick="showSignupForm();return false;" style="color:#2155cd;">Daftar</a></div>
     </div>
   </div>
-</section>
-
-<!-- File Manager Section -->
-<div class="container" id="filemanager">
-    <div class="main-container row">
-        <!-- Folder Sidebar -->
-        <div class="folder-sidebar col-md-3">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4>File Manager</h4>
-                <button class="btn btn-sm btn-primary" id="newFolderBtn" title="New Folder">
-                    <i class="fas fa-folder-plus"></i>
-                </button>
-            </div>
-            <div id="folderList"></div>
+  <div id="signupModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:2000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2rem 1.5rem;border-radius:16px;max-width:350px;width:90%;position:relative;">
+      <button onclick="closeSignupForm()" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.4rem;cursor:pointer;">&times;</button>
+      <h3 style="color:#2155cd;">Daftar Akun</h3>
+      <form id="signupForm" onsubmit="return validateSignupForm()">
+        <div id="signupError" class="form-error"></div>
+        <div class="form-group">
+          <label for="signupName">Nama</label>
+          <input type="text" id="signupName" required>
         </div>
-        <!-- Main Content -->
-        <div class="col-md-9">
-            <div class="upload-section mb-5">
-                <input type="file" id="excelFile" accept=".xlsx, .xls" hidden>
-                <label for="excelFile" class="btn btn-primary w-100 py-3">
-                    <i class="fas fa-cloud-upload-alt me-2"></i>Upload Excel File
-                </label>
-            </div>
-            <div class="action-buttons">
-                <button class="btn btn-primary action-btn" id="editFileBtn" disabled>
-                    <i class="fas fa-edit me-1"></i>Edit File
-                </button>
-                <button class="btn btn-success action-btn" id="saveChangesBtn" disabled>
-                    <i class="fas fa-save me-1"></i>Save Changes
-                </button>
-                <button class="btn btn-danger action-btn" id="cancelEditBtn" disabled>
-                    <i class="fas fa-times me-1"></i>Cancel Edit
-                </button>
-            </div>
-            <div class="search-container mb-4 d-flex align-items-center">
-                <div class="position-relative flex-grow-1">
-                    <input type="text" id="searchInput" class="form-control search-box" placeholder="Search data...">
-                    <i class="fas fa-search position-absolute" style="right: 20px; top: 50%; transform: translateY(-50%); color: #6c757d;"></i>
-                </div>
-                <button class="btn btn-danger close-folder-btn" id="closeFolderBtn">
-                    <i class="fas fa-times me-1"></i>Close Folder
-                </button>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover" id="excelTable">
-                    <thead class="table-primary"></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="fas fa-folder-open"></i>
-                <h5>No Folder Selected</h5>
-                <p class="text-muted">Select a folder from the sidebar or create a new one to get started</p>
-            </div>
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" required>
         </div>
-    </div>
-</div>
-<!-- Footer -->
-<footer class="footer py-4 mt-5">
-  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-    <div>
-      <span class="fw-bold">ExcelFilePro</span> &copy; 2025
-      <span class="ms-3">
-        <a href="#">About</a>
-        <a href="#" class="ms-3">Privacy Policy</a>
-        <a href="#" class="ms-3">Contact</a>
-      </span>
-    </div>
-    <div class="mt-3 mt-md-0">
-      <a href="https://www.facebook.com/supriyanto.supriyanto.167" class="text-white me-2"><i class="fab fa-facebook"></i></a>
-      <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
-      <a href="https://www.instagram.com/" class="text-white"><i class="fab fa-instagram"></i></a>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" required>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword2">Konfirmasi Password</label>
+          <input type="password" id="signupPassword2" required>
+        </div>
+        <button class="btn" type="submit">Daftar</button>
+      </form>
+      <div style="margin-top:1rem;font-size:0.96rem;">Sudah punya akun? <a href="#" onclick="showLoginForm();return false;" style="color:#2155cd;">Login</a></div>
     </div>
   </div>
-</footer>
-<!-- Folder Modal -->
-<div class="modal fade" id="folderModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Create New Folder</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="folderName" class="form-control" placeholder="Folder name">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveFolderBtn">Create Folder</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Edit Cell Modal -->
-<div class="modal fade" id="editCellModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Cell Value</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Column: <span id="editColumnName"></span></label>
-                    <input type="text" class="form-control edit-cell-input" id="editCellValue">
-                </div>
-                <div class="edit-buttons">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="saveCellEditBtn">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
-<script>
-/* All JS from paste.txt, unchanged except for placement at the end for correct event attachment */
-let db;
-let activeFolderId = null;
-let currentFileData = null;
-let currentFileId = null;
-let isEditMode = false;
-let editedData = null;
-const DB_NAME = 'ExcelFileManager';
-const DB_VERSION = 5;
-// Initialize Database
-const initDB = () => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = (e) => {
-        db = e.target.result;
-        if (!db.objectStoreNames.contains('folders')) {
-            const folderStore = db.createObjectStore('folders', {
-                keyPath: 'id',
-                autoIncrement: true
-            });
-            folderStore.createIndex('name', 'name', { unique: true });
-        }
-        if (!db.objectStoreNames.contains('files')) {
-            const fileStore = db.createObjectStore('files', {
-                keyPath: 'id',
-                autoIncrement: true
-            });
-            fileStore.createIndex('folderId', 'folderId');
-        }
-    };
-    request.onsuccess = (e) => {
-        db = e.target.result;
-        loadFolders();
-        updateEmptyState();
-        // Add progress modal to DOM
-        document.body.insertAdjacentHTML('beforeend', `
-            <div class="modal fade" id="progressModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Processing Excel File</h5>
-                        </div>
-                        <div class="modal-body">
-                            <div class="progress mb-3">
-                                <div id="uploadProgress" class="progress-bar progress-bar-striped progress-bar-animated" 
-                                     role="progressbar" style="width: 0%"></div>
-                            </div>
-                            <p id="progressText">Reading file...</p>
-                            <p id="fileStats" class="small text-muted"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `);
-    };
-};
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-const createFolder = (name) => {
-    const transaction = db.transaction(['folders'], 'readwrite');
-    const store = transaction.objectStore('folders');
-    const checkRequest = store.index('name').get(name);
-    checkRequest.onsuccess = (e) => {
-        if (e.target.result) {
-            alert('Folder with this name already exists!');
-            return;
-        }
-        const addRequest = store.add({ name });
-        addRequest.onsuccess = () => {
-            loadFolders();
-            document.getElementById('folderName').value = '';
-            bootstrap.Modal.getInstance(document.getElementById('folderModal')).hide();
-        };
-        addRequest.onerror = (e) => {
-            console.error('Error creating folder:', e.target.error);
-            alert('Error creating folder. Please try a different name.');
-        };
-    };
-};
-const loadFolders = () => {
-    const transaction = db.transaction(['folders'], 'readonly');
-    const store = transaction.objectStore('folders');
-    const request = store.getAll();
-    request.onsuccess = (e) => {
-        const folders = e.target.result;
-        renderFolders(folders);
-        updateEmptyState();
-    };
-};
-const renderFolders = async (folders) => {
-    const container = document.getElementById('folderList');
-    container.innerHTML = '';
-    for (const folder of folders) {
-        const fileCount = await countFilesInFolder(folder.id);
-        const folderElement = document.createElement('div');
-        folderElement.className = `folder-item p-2 mb-2 rounded d-flex justify-content-between align-items-center 
-            ${activeFolderId === folder.id ? 'active-file' : ''}`;
-        folderElement.dataset.id = folder.id;
-        folderElement.style.cssText = 'cursor: pointer; position: relative';
-        folderElement.innerHTML = `
-            <div>
-                <i class="fas fa-folder me-2"></i>
-                ${folder.name}
-            </div>
-            <div class="d-flex align-items-center">
-                <span class="badge badge-count me-2">${fileCount}</span>
-                <button class="btn btn-sm btn-danger delete-folder-btn">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        `;
-        folderElement.addEventListener('click', async () => {
-            activeFolderId = Number(folder.id);
-            await loadFiles(activeFolderId);
-            loadFolders();
-            updateEmptyState();
-        });
-        const deleteBtn = folderElement.querySelector('.delete-folder-btn');
-        deleteBtn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            if(confirm('Delete this folder and all its contents?')) {
-                await deleteFolder(folder.id);
-                updateEmptyState();
-            }
-        });
-        container.appendChild(folderElement);
-    }
-};
-const deleteFolder = async (folderId) => {
-    return new Promise((resolve) => {
-        const transaction = db.transaction(['folders', 'files'], 'readwrite');
-        const folderStore = transaction.objectStore('folders');
-        folderStore.delete(folderId);
-        const fileStore = transaction.objectStore('files');
-        const index = fileStore.index('folderId');
-        const request = index.openCursor(IDBKeyRange.only(folderId));
-        request.onsuccess = (e) => {
-            const cursor = e.target.result;
-            if(cursor) {
-                fileStore.delete(cursor.primaryKey);
-                cursor.continue();
-            }
-        };
-        transaction.oncomplete = () => {
-            if(activeFolderId === folderId) {
-                activeFolderId = null;
-                document.getElementById('excelTable').style.display = 'none';
-                disableEditButtons();
-            }
-            loadFolders();
-            updateEmptyState();
-            resolve();
-        };
-    });
-};
-const countFilesInFolder = (folderId) => {
-    return new Promise((resolve) => {
-        const transaction = db.transaction(['files'], 'readonly');
-        const store = transaction.objectStore('files');
-        const index = store.index('folderId');
-        const request = index.count(folderId);
-        request.onsuccess = (e) => resolve(e.target.result);
-    });
-};
-const loadFiles = async (folderId) => {
-    return new Promise((resolve) => {
-        const transaction = db.transaction(['files'], 'readonly');
-        const store = transaction.objectStore('files');
-        const index = store.index('folderId');
-        const request = index.getAll(folderId);
-        request.onsuccess = (e) => {
-            const files = e.target.result;
-            if(files.length > 0) {
-                const latestFile = files[files.length-1];
-                currentFileData = latestFile.data;
-                currentFileId = latestFile.id;
-                displayData(currentFileData);
-                document.getElementById('excelTable').style.display = 'table';
-                enableEditButtons();
-            } else {
-                document.getElementById('excelTable').style.display = 'none';
-                currentFileData = null;
-                currentFileId = null;
-                disableEditButtons();
-            }
-            updateEmptyState();
-            resolve(files);
-        };
-    });
-};
-const saveFile = async (fileData, folderId) => {
-    return new Promise((resolve) => {
-        const transaction = db.transaction(['files'], 'readwrite');
-        const store = transaction.objectStore('files');
-        const request = store.add({
-            fileName: fileData.fileName,
-            data: fileData.data,
-            folderId,
-            uploadedAt: new Date()
-        });
-        request.onsuccess = async () => {
-            await loadFiles(folderId);
-            loadFolders();
-            updateEmptyState();
-            resolve();
-        };
-    });
-};
-const updateFile = async (fileId, newData) => {
-    return new Promise((resolve) => {
-        const transaction = db.transaction(['files'], 'readwrite');
-        const store = transaction.objectStore('files');
-        const getRequest = store.get(fileId);
-        getRequest.onsuccess = (e) => {
-            const file = e.target.result;
-            if (file) {
-                file.data = newData;
-                const updateRequest = store.put(file);
-                updateRequest.onsuccess = () => {
-                    currentFileData = newData;
-                    resolve(true);
-                };
-                updateRequest.onerror = () => {
-                    resolve(false);
-                };
-            } else {
-                resolve(false);
-            }
-        };
-    });
-};
-function displayData(data, isEditable = false) {
-    const table = document.getElementById('excelTable');
-    const thead = table.querySelector('thead');
-    const tbody = table.querySelector('tbody');
-    thead.innerHTML = '';
-    tbody.innerHTML = '';
-    const headerRow = document.createElement('tr');
-    data[0].forEach(headerText => {
-        const th = document.createElement('th');
-        th.textContent = headerText;
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    for(let i = 1; i < data.length; i++) {
-        const tr = document.createElement('tr');
-        let searchString = '';
-        data[i].forEach((cellData, cellIndex) => {
-            const td = document.createElement('td');
-            if (isEditable) {
-                td.style.cursor = 'pointer';
-                td.addEventListener('click', () => {
-                    openEditModal(i, cellIndex, data[0][cellIndex], cellData);
-                });
-            }
-            td.textContent = cellData;
-            searchString += cellData.toString().toLowerCase() + ' ';
-            tr.appendChild(td);
-        });
-        tr.setAttribute('data-search', searchString.trim());
-        tbody.appendChild(tr);
-    }
-    table.style.display = 'table';
-    updateEmptyState();
-}
-function enableEditButtons() {
-    document.getElementById('editFileBtn').disabled = false;
-    document.getElementById('saveChangesBtn').disabled = true;
-    document.getElementById('cancelEditBtn').disabled = true;
-}
-function disableEditButtons() {
-    document.getElementById('editFileBtn').disabled = true;
-    document.getElementById('saveChangesBtn').disabled = true;
-    document.getElementById('cancelEditBtn').disabled = true;
-}
-function openEditModal(rowIndex, colIndex, colName, currentValue) {
-    const editModal = new bootstrap.Modal(document.getElementById('editCellModal'));
-    document.getElementById('editColumnName').textContent = colName;
-    document.getElementById('editCellValue').value = currentValue;
-    document.getElementById('saveCellEditBtn').onclick = () => {
-        const newValue = document.getElementById('editCellValue').value;
-        editedData[rowIndex][colIndex] = newValue;
-        const tbody = document.getElementById('excelTable').querySelector('tbody');
-        const row = tbody.children[rowIndex - 1];
-        if (row) {
-            const cell = row.children[colIndex];
-            if (cell) {
-                cell.textContent = newValue;
-            }
-        }
-        editModal.hide();
-    };
-    editModal.show();
-}
-function updateEmptyState() {
-    const emptyState = document.getElementById('emptyState');
-    const excelTable = document.getElementById('excelTable');
-    if (!activeFolderId) {
-        emptyState.style.display = 'flex';
-        excelTable.style.display = 'none';
-        disableEditButtons();
-    } else {
-        emptyState.style.display = 'none';
-        if (excelTable.querySelector('tbody').children.length > 0) {
-            excelTable.style.display = 'table';
-        }
-    }
-}
-document.getElementById('excelFile').addEventListener('change', async function(e) {
-    if(!activeFolderId) {
-        alert('Please select a folder first!');
-        return;
-    }
-    const file = e.target.files[0];
-    if (!file) return;
-    const modal = new bootstrap.Modal(document.getElementById('progressModal'));
-    modal.show();
-    const progressBar = document.getElementById('uploadProgress');
-    const progressText = document.getElementById('progressText');
-    const fileStats = document.getElementById('fileStats');
-    fileStats.textContent = `File: ${file.name} (${formatFileSize(file.size)})`;
-    try {
-        const reader = new FileReader();
-        progressText.textContent = "Processing (this may take a while for large files)...";
-        reader.onload = async (e) => {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = [];
-            const chunkSize = 5000;
-            let rowCount = 0;
-            const range = XLSX.utils.decode_range(firstSheet['!ref']);
-            const totalRows = range.e.r;
-            for (let R = range.s.r; R <= range.e.r; R += chunkSize) {
-                const endR = Math.min(R + chunkSize - 1, range.e.r);
-                const newRange = XLSX.utils.encode_range({
-                    s: { c: range.s.c, r: R },
-                    e: { c: range.e.c, r: endR }
-                });
-                firstSheet['!ref'] = newRange;
-                const chunk = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                if (R === range.s.r) {
-                    jsonData.push(...chunk);
-                } else {
-                    jsonData.push(...chunk.slice(1));
-                }
-                rowCount += chunk.length - (R === range.s.r ? 0 : 1);
-                const progress = Math.min(100, Math.round((rowCount / totalRows) * 100));
-                progressBar.style.width = `${progress}%`;
-                progressText.textContent = `Processed ${rowCount} of ${totalRows} rows...`;
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
-            await saveFile({
-                fileName: file.name,
-                data: jsonData
-            }, activeFolderId);
-            modal.hide();
-        };
-        reader.readAsArrayBuffer(file);
-    } catch (error) {
-        console.error("Error processing file:", error);
-        progressText.textContent = `Error: ${error.message}`;
-        progressBar.classList.remove('progress-bar-animated');
-        progressBar.classList.add('bg-danger');
-    }
-});
-document.getElementById('newFolderBtn').addEventListener('click', function() {
-    var modal = new bootstrap.Modal(document.getElementById('folderModal'));
-    modal.show();
-});
-document.getElementById('saveFolderBtn').addEventListener('click', function() {
-    var name = document.getElementById('folderName').value.trim();
-    if (name) {
-        createFolder(name);
-    } else {
-        alert('Please enter a folder name');
-    }
-});
-document.getElementById('editFileBtn').addEventListener('click', function() {
-    if (!currentFileData) return;
-    isEditMode = true;
-    editedData = JSON.parse(JSON.stringify(currentFileData));
-    displayData(editedData, true);
-    document.getElementById('editFileBtn').disabled = true;
-    document.getElementById('saveChangesBtn').disabled = false;
-    document.getElementById('cancelEditBtn').disabled = false;
-});
-document.getElementById('saveChangesBtn').addEventListener('click', async function() {
-    if (!editedData || !currentFileId) return;
-    const success = await updateFile(currentFileId, editedData);
-    if (success) {
-        alert('Changes saved successfully!');
-        isEditMode = false;
-        displayData(editedData);
-        document.getElementById('editFileBtn').disabled = false;
-        document.getElementById('saveChangesBtn').disabled = true;
-        document.getElementById('cancelEditBtn').disabled = true;
-    } else {
-        alert('Failed to save changes. Please try again.');
-    }
-});
-document.getElementById('cancelEditBtn').addEventListener('click', function() {
-    isEditMode = false;
-    displayData(currentFileData);
-    document.getElementById('editFileBtn').disabled = false;
-    document.getElementById('saveChangesBtn').disabled = true;
-    document.getElementById('cancelEditBtn').disabled = true;
-});
-document.getElementById('searchInput').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const rows = document.querySelectorAll('#excelTable tbody tr');
-    rows.forEach(row => {
-        const rowText = row.getAttribute('data-search');
-        row.style.display = rowText.includes(searchTerm) ? '' : 'none';
-    });
-});
-document.getElementById('closeFolderBtn').addEventListener('click', function() {
-    activeFolderId = null;
-    currentFileData = null;
-    currentFileId = null;
-    isEditMode = false;
-    document.getElementById('excelTable').style.display = 'none';
-    document.getElementById('searchInput').value = '';
-    disableEditButtons();
-    loadFolders();
-    updateEmptyState();
-});
-initDB();
 
-// Digital Clock Script
-function updateDigitalClock() {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    const timeString = `${hours}:${minutes}:${seconds}`;
-    const clock = document.getElementById('digitalClock');
-    if (clock) {
-        clock.textContent = timeString;
-    }
-}
-setInterval(updateDigitalClock, 1000);
-updateDigitalClock(); // initial call
+  <script>
+    // Chart.js Budget vs Expenses
+    const ctx = document.getElementById('budgetExpensesChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Januari', 'Februari', 'Maret', 'April'],
+        datasets: [
+          {
+            label: 'Budget',
+            data: [4000000, 4200000, 4100000, 4300000],
+            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+          },
+          {
+            label: 'Expenses',
+            data: [3800000, 4500000, 4000000, 4200000],
+            backgroundColor: 'rgba(255, 99, 132, 0.7)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return 'Rp ' + value.toLocaleString('id-ID');
+              }
+            }
+          }
+        }
+      }
+    });
 
-</script>
+    // Sidebar: Kalender Widget Sederhana
+    function renderCalendar() {
+      const now = new Date();
+      const month = now.toLocaleString('id-ID', { month: 'long' });
+      const year = now.getFullYear();
+      document.getElementById('calendarWidget').innerHTML = `<span style="font-weight:bold;">${month}</span> ${year}`;
+    }
+    renderCalendar();
+
+    // Cookie Consent
+    function acceptCookies() {
+      document.getElementById('cookieConsent').style.display = 'none';
+      localStorage.setItem('cookieConsent', 'true');
+    }
+    window.onload = function() {
+      if (!localStorage.getItem('cookieConsent')) {
+        document.getElementById('cookieConsent').style.display = 'block';
+      }
+      renderFileManager();
+    };
+
+    // Login/Signup Modal
+    function showLoginForm() {
+      document.getElementById('loginModal').style.display = 'flex';
+      document.getElementById('signupModal').style.display = 'none';
+    }
+    function closeLoginForm() {
+      document.getElementById('loginModal').style.display = 'none';
+    }
+    function showSignupForm() {
+      document.getElementById('signupModal').style.display = 'flex';
+      document.getElementById('loginModal').style.display = 'none';
+    }
+    function closeSignupForm() {
+      document.getElementById('signupModal').style.display = 'none';
+    }
+    // Validasi Login
+    function validateLoginForm() {
+      let email = document.getElementById('loginEmail').value.trim();
+      let pass = document.getElementById('loginPassword').value;
+      let error = '';
+      if (!email || !pass) error = 'Semua field wajib diisi!';
+      else if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) error = 'Email tidak valid!';
+      if (error) {
+        document.getElementById('loginError').textContent = error;
+        return false;
+      }
+      document.getElementById('loginError').textContent = '';
+      alert('Login berhasil (simulasi)');
+      closeLoginForm();
+      return false;
+    }
+
+    // Validasi Signup
+    function validateSignupForm() {
+      let nama = document.getElementById('signupName').value.trim();
+      let email = document.getElementById('signupEmail').value.trim();
+      let pass = document.getElementById('signupPassword').value;
+      let pass2 = document.getElementById('signupPassword2').value;
+      let error = '';
+      if (!nama || !email || !pass || !pass2) error = 'Semua field wajib diisi!';
+      else if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) error = 'Email tidak valid!';
+      else if (pass.length < 6) error = 'Password minimal 6 karakter!';
+      else if (pass !== pass2) error = 'Konfirmasi password tidak sama!';
+      if (error) {
+        document.getElementById('signupError').textContent = error;
+        return false;
+      }
+      document.getElementById('signupError').textContent = '';
+      alert('Pendaftaran berhasil (simulasi)');
+      closeSignupForm();
+      return false;
+    }
+
+    // Validasi Form Kontak
+    function validateContactForm() {
+      let nama = document.getElementById('contactName').value.trim();
+      let email = document.getElementById('contactEmail').value.trim();
+      let msg = document.getElementById('contactMsg').value.trim();
+      let error = '';
+      if (!nama || !email || !msg) error = 'Semua field wajib diisi!';
+      else if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) error = 'Email tidak valid!';
+      if (error) {
+        document.getElementById('contactError').textContent = error;
+        return false;
+      }
+      document.getElementById('contactError').textContent = '';
+      alert('Pesan Anda terkirim! (simulasi)');
+      document.getElementById('contactForm').reset();
+      return false;
+    }
+
+    // Newsletter
+    function subscribeNewsletter(e) {
+      e.preventDefault();
+      let email = document.getElementById('newsletterEmail').value.trim();
+      if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
+        alert('Email tidak valid!');
+        return false;
+      }
+      alert('Terima kasih telah berlangganan!');
+      document.getElementById('newsletterEmail').value = '';
+      return false;
+    }
+
+   // ==========================
+// FILE MANAGER SCRIPT START
+// ==========================
+
+// 1. LOAD fileSystem dari localStorage jika ada
+let fileSystem;
+if (localStorage.getItem('fileSystem')) {
+  fileSystem = JSON.parse(localStorage.getItem('fileSystem'));
+} else {
+  fileSystem = [
+    { name: 'Root', isDirectory: true, items: [] }
+  ];
+}
+let currentPath = ['Root'];
+
+// 2. SIMPAN fileSystem ke localStorage setiap perubahan
+function saveFileSystem() {
+  // Hapus properti fileObj sebelum disimpan (karena tidak bisa di-serialize)
+  function stripFileObj(node) {
+    if (Array.isArray(node)) {
+      node.forEach(stripFileObj);
+    } else if (node && typeof node === 'object') {
+      delete node.fileObj;
+      if (node.items) stripFileObj(node.items);
+    }
+  }
+  // Buat salinan agar fileObj tidak hilang dari memori
+  let temp = JSON.parse(JSON.stringify(fileSystem));
+  stripFileObj(temp);
+  localStorage.setItem('fileSystem', JSON.stringify(temp));
+}
+
+function renderFileManager() {
+  const tree = document.getElementById('fileManagerTree');
+  let node = fileSystem[0];
+  for (let i = 1; i < currentPath.length; i++) {
+    node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
+    if (!node) break;
+  }
+  tree.innerHTML = `
+    <div style="margin-bottom:0.5rem;">
+      <b>Path:</b> ${currentPath.join(' / ')}
+      ${currentPath.length > 1 ? `<button class="btn" style="margin-left:1rem;padding:0.2rem 0.8rem;" onclick="goUp()">⬆️ Naik</button>` : ''}
+    </div>
+    <form onsubmit="event.preventDefault();filterFolder();" style="margin-bottom:1rem;">
+      <input type="search" id="folderSearch" placeholder="Cari di folder ini..." style="padding:0.3rem 0.7rem;border-radius:8px;border:1px solid #ccc;width:220px;">
+      <button type="button" class="btn" onclick="filterFolder()">Cari</button>
+      <button type="button" class="btn" style="background:#eee;color:#2155cd;" onclick="resetFolderSearch()">Reset</button>
+    </form>
+    <ul id="folderList" style="list-style:none;padding-left:0;"></ul>
+  `;
+  renderFolderList(node);
+}
+
+function renderFolderList(node, filterText = '') {
+  const ul = document.getElementById('folderList');
+  if (!ul) return;
+  let items = node.items || [];
+  if (filterText) {
+    const q = filterText.toLowerCase();
+    items = items.filter(item => item.name.toLowerCase().includes(q));
+  }
+  ul.innerHTML = items.map((item, idx) =>
+    item.isDirectory
+      ? `<li><span style="color:#2155cd;cursor:pointer;" onclick="openFolder('${item.name}')">📁 ${item.name}</span></li>`
+      : item.name.match(/\.(xlsx|xls|csv)$/i)
+        ? `<li><span style="color:#2b9348;cursor:pointer;text-decoration:underline;" onclick="openExcelFile(${idx})">📄 ${item.name}</span> <span style="color:#888;font-size:0.9em;">(${item.size ? item.size + ' bytes' : ''})</span></li>`
+        : `<li>📄 ${item.name} <span style="color:#888;font-size:0.9em;">(${item.size ? item.size + ' bytes' : ''})</span></li>`
+  ).join('');
+}
+
+function filterFolder() {
+  let q = document.getElementById('folderSearch').value.trim().toLowerCase();
+  let node = fileSystem[0];
+  for (let i = 1; i < currentPath.length; i++) {
+    node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
+    if (!node) return;
+  }
+  renderFolderList(node, q);
+}
+
+function resetFolderSearch() {
+  document.getElementById('folderSearch').value = '';
+  filterFolder();
+}
+
+// Real-time search saat mengetik
+document.addEventListener('input', function(e){
+  if(e.target && e.target.id === 'folderSearch'){
+    filterFolder();
+  }
+});
+
+function goUp() {
+  if (currentPath.length > 1) {
+    currentPath.pop();
+    renderFileManager();
+  }
+}
+function openFolder(name) {
+  let node = fileSystem[0];
+  for (let i = 1; i < currentPath.length; i++) {
+    node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
+    if (!node) return;
+  }
+  let next = node.items.find(item => item.isDirectory && item.name === name);
+  if (next) {
+    currentPath.push(name);
+    renderFileManager();
+  } else {
+    alert("Folder tidak ditemukan!");
+  }
+}
+function createFolder() {
+  let folderName = prompt('Nama folder baru:');
+  if (!folderName) return;
+  let node = fileSystem[0];
+  for (let i = 1; i < currentPath.length; i++) {
+    node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
+    if (!node) return;
+  }
+  if (node.items.some(item => item.isDirectory && item.name === folderName)) {
+    alert('Folder sudah ada!');
+    return;
+  }
+  node.items.push({ name: folderName, isDirectory: true, items: [] });
+  saveFileSystem();
+  renderFileManager();
+}
+function uploadFiles(event) {
+  let files = event.target.files;
+  let node = fileSystem[0];
+  for (let i = 1; i < currentPath.length; i++) {
+    node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
+    if (!node) return;
+  }
+  for (let file of files) {
+    node.items.push({ name: file.name, isDirectory: false, size: file.size, type: file.type, fileObj: file });
+  }
+  saveFileSystem();
+  renderFileManager();
+  event.target.value = '';
+}
+function uploadFolder(event) {
+  let files = event.target.files;
+  let node = fileSystem[0];
+  for (let file of files) {
+    let relPath = file.webkitRelativePath || file.relativePath || file.name;
+    let parts = relPath.split('/');
+    let curr = node;
+    for (let i = 1; i < parts.length - 1; i++) {
+      let folder = curr.items.find(item => item.isDirectory && item.name === parts[i]);
+      if (!folder) {
+        folder = { name: parts[i], isDirectory: true, items: [] };
+        curr.items.push(folder);
+      }
+      curr = folder;
+    }
+    if (parts[parts.length - 1]) {
+      curr.items.push({ name: parts[parts.length - 1], isDirectory: false, size: file.size, type: file.type, fileObj: file });
+    }
+  }
+  saveFileSystem();
+  renderFileManager();
+  event.target.value = '';
+}
+
+function openExcelFile(idx) {
+  let node = fileSystem[0];
+  for (let i = 1; i < currentPath.length; i++) {
+    node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
+    if (!node) return;
+  }
+  let fileItem = node.items[idx];
+  if (!fileItem || !fileItem.fileObj) {
+    alert('File tidak ditemukan di memori!\nSilakan upload ulang file untuk preview.');
+    return;
+  }
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    let data = new Uint8Array(e.target.result);
+    let workbook = XLSX.read(data, {type: 'array'});
+    let html = '';
+    workbook.SheetNames.forEach(function(sheetName) {
+      let sheet = workbook.Sheets[sheetName];
+      html += `<h4>${sheetName}</h4>`;
+      html += XLSX.utils.sheet_to_html(sheet);
+    });
+    showModal('Preview Excel', html);
+  };
+  reader.readAsArrayBuffer(fileItem.fileObj);
+}
+
+function showModal(title, content) {
+  let modal = document.createElement('div');
+  modal.className = 'modal-excel-preview';
+  modal.innerHTML = `
+    <div class="modal-excel-preview-content">
+      <button onclick="this.parentNode.parentNode.remove()">&times;</button>
+      <h3>${title}</h3>
+      <div>${content}</div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+// ========================
+// FILE MANAGER SCRIPT END
+// ========================
+
+  </script>
 </body>
 </html>
-
 
 
 
