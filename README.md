@@ -219,8 +219,8 @@
     <div class="header-right">
       <button class="btn" onclick="showLoginForm()">Login / Signup</button>
       <div class="social-icons">
-        <a href="#" title="Facebook">🌐</a>
-        <a href="#" title="Instagram">📸</a>
+        <a href="https://www.facebook.com/" title="Facebook">🌐</a>
+        <a href="https://www.instagram.com/" title="Instagram">📸</a>
       </div>
       <div class="search-bar">
         <input type="text" placeholder="Cari...">
