@@ -7,20 +7,70 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <style>
-    /* CSS lengkap dari script kedua, tidak diubah */
     body { font-family: 'Montserrat', Arial, sans-serif; margin: 0; background: #f8fafc; color: #222;}
-    header { background: #2155cd; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 2rem; position: sticky; top: 0; z-index: 10;}
-    .logo { font-weight: bold; font-size: 1.5rem; letter-spacing: 2px; display: flex; align-items: center; gap: 8px;}
-    nav { display: flex; gap: 1.5rem; align-items: center;}
-    nav a { color: #fff; text-decoration: none; font-weight: 500; transition: color 0.2s;}
-    nav a:hover { color: #ffd700;}
-    .header-right { display: flex; align-items: center; gap: 1rem;}
-    .btn { background: #ffd700; color: #2155cd; border: none; padding: 0.5rem 1.2rem; border-radius: 20px; font-weight: bold; cursor: pointer; transition: background 0.2s;}
-    .btn:hover { background: #fff; color: #2155cd;}
-    .social-icons a { color: #fff; margin-left: 8px; font-size: 1.2rem; text-decoration: none;}
+    header {
+      background: #2155cd;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      transition: left 0.3s;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: #ffd700; }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .btn {
+      background: #ffd700;
+      color: #2155cd;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #fff; color: #2155cd; }
+    .social-icons a {
+      color: #fff;
+      margin-left: 8px;
+      font-size: 1.2rem;
+      text-decoration: none;
+    }
     .search-bar { display: none; margin-left: 1rem;}
     .search-bar input { padding: 0.3rem 0.7rem; border-radius: 12px; border: none;}
-    .hero { background: linear-gradient(90deg, #2155cd 70%, #ffd700 100%); color: #fff; padding: 3rem 2rem 2rem 2rem; text-align: center; position: relative;}
+    .hero {
+      background: linear-gradient(90deg, #2155cd 70%, #ffd700 100%);
+      color: #fff;
+      padding: 3rem 2rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+    }
     .hero h1 { font-size: 2.5rem; margin-bottom: 0.6rem; font-weight: 700;}
     .hero p { font-size: 1.2rem; margin-bottom: 1.2rem;}
     .hero .btn { font-size: 1.1rem; margin: 0.3rem;}
@@ -70,10 +120,10 @@
     #fileManagerTree ul { list-style:none; padding-left:1.2em;}
     #fileManagerTree li { margin-bottom:0.2em;}
     #fileManagerTree span { cursor:pointer;}
-    .modal-excel-preview { position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:3000; display:flex;align-items:center;justify-content:center;}
-    .modal-excel-preview-content { background:#fff;max-width:90vw;max-height:90vh;overflow:auto;padding:2rem 1.5rem;border-radius:16px;position:relative;}
+    .modal-excel-preview { position:fixed; top:0; left:0; width:100vw; height:100vh; background:#0008; z-index:3000; display:flex; align-items:center; justify-content:center;}
+    .modal-excel-preview-content { background:#fff; max-width:90vw; max-height:90vh; overflow:auto; padding:2rem 1.5rem; border-radius:16px; position:relative;}
     .modal-excel-preview-content h3 { color:#2155cd; }
-    .modal-excel-preview-content button { position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.4rem;cursor:pointer;}
+    .modal-excel-preview-content button { position:absolute; top:10px; right:10px; background:none; border:none; font-size:1.4rem; cursor:pointer;}
     .folder-section { background: #fff; border-radius: 16px; box-shadow: 0 2px 8px #0001; margin-bottom: 2rem; max-width: 500px; overflow: hidden;}
     .folder-header { display: flex; align-items: center; cursor: pointer; background: #2155cd; color: #fff; padding: 1rem 1.5rem; font-weight: bold; font-size: 1.15rem; border: none; outline: none; user-select: none; transition: background 0.2s;}
     .folder-header:hover { background: #163c94;}
@@ -81,9 +131,68 @@
     .folder-section.open .folder-content { display: block;}
     .folder-arrow { margin-right: 1rem; font-size: 1.2rem; transition: transform 0.2s;}
     .folder-section.open .folder-arrow { transform: rotate(90deg);}
-    @keyframes fadeIn { from { opacity: 0; } to   { opacity: 1; }}
-    @media (max-width: 900px) { .container { flex-direction: column;} .sidebar { margin-top: 0; margin-bottom: 1.5rem; max-width: 100%;}}
-    @media (max-width: 700px) { .features, .blog-list, .testimonial-slider { flex-direction: column;} .main-content, .sidebar { min-width: 0; max-width: 100%;} header { flex-direction: column; align-items: flex-start; padding: 1rem;} nav { flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;} .header-right { margin-top: 0.5rem;} .search-bar { display: block; margin-top: 0.5rem;}}
+    /* Hamburger styles */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      z-index: 2001;
+      margin-left: 1rem;
+      background: transparent;
+      border: none;
+      outline: none;
+    }
+    .hamburger .bar {
+      display: block;
+      width: 26px;
+      height: 3px;
+      margin: 4px 0;
+      background-color: #fff;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+    .hamburger.active .bar:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .hamburger.active .bar:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.active .bar:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+    @media (max-width: 900px) {
+      .container { flex-direction: column;}
+      .sidebar { margin-top: 0; margin-bottom: 1.5rem; max-width: 100%;}
+    }
+    @media (max-width: 700px) {
+      header { flex-direction: row; align-items: center; padding: 1rem;}
+      nav {
+        position: fixed;
+        left: -100vw;
+        top: 0;
+        width: 70vw;
+        max-width: 320px;
+        height: 100vh;
+        background: #2155cd;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        padding-top: 5rem;
+        z-index: 2000;
+        transition: left 0.3s;
+      }
+      nav.active { left: 0; }
+      .hamburger { display: flex; }
+      .header-right { margin-top: 0; }
+      .features, .blog-list, .testimonial-slider { flex-direction: column;}
+      .main-content, .sidebar { min-width: 0; max-width: 100%;}
+      .search-bar { display: block; margin-top: 0.5rem;}
+    }
+    @keyframes fadeIn { from { opacity: 0; } to   { opacity: 1; } }
   </style>
 </head>
 <body>
@@ -94,7 +203,12 @@
     <div class="logo">
       <span>💰</span> Budget<span style="color:#ffd700;">&</span>Expenses
     </div>
-    <nav>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <nav id="mainNav">
       <a href="#">Beranda</a>
       <a href="#features">Fitur</a>
       <a href="#chart">Statistik</a>
@@ -105,8 +219,8 @@
     <div class="header-right">
       <button class="btn" onclick="showLoginForm()">Login / Signup</button>
       <div class="social-icons">
-        <a href="https://www.facebook.com/" title="Facebook">🌐</a>
-        <a href="https://www.instagram.com/" title="Instagram">📸</a>
+        <a href="#" title="Facebook">🌐</a>
+        <a href="#" title="Instagram">📸</a>
       </div>
       <div class="search-bar">
         <input type="text" placeholder="Cari...">
@@ -119,8 +233,6 @@
     <button class="btn" onclick="showSignupForm()">Mulai Sekarang</button>
     <button class="btn" style="background:#fff;color:#2155cd;" onclick="window.location='#features'">Pelajari Lebih Lanjut</button>
   </section>
-
-  <!-- Folder Section untuk Form Input & Tabel Data -->
   <section class="folder-section" id="budgetFolder">
     <div class="folder-header" onclick="toggleFolder('budgetFolder')">
       <span class="folder-arrow">&#9654;</span>
@@ -161,13 +273,13 @@
               <th style="padding:8px;">Kategori</th>
               <th style="padding:8px;">Tipe</th>
               <th style="padding:8px;">Jumlah (Rp)</th>
+              <th style="padding:8px;">Aksi</th>
             </tr>
           </thead>
           <tbody>
             <!-- Data rows will appear here -->
           </tbody>
         </table>
-        <!-- Grafik di bawah tabel -->
         <div class="form-section" style="margin-top:1.5rem;">
           <h3>Visualisasi Data Budget & Pengeluaran</h3>
           <canvas id="inputDataChart" height="120"></canvas>
@@ -175,8 +287,6 @@
       </section>
     </div>
   </section>
-
-  <!-- File Manager Section -->
   <section id="filemanager-section" style="background:#fff;border-radius:16px;box-shadow:0 2px 8px #0001;padding:1.5rem;margin:2rem 0;">
     <h3 style="color:#2155cd;">File Manager</h3>
     <div style="margin-bottom:1rem;">
@@ -192,7 +302,6 @@
     </div>
     <div id="fileManagerTree" style="font-size:1rem;"></div>
   </section>
-
   <div class="container">
     <div class="main-content">
       <section id="features" class="features">
@@ -324,7 +433,6 @@
   <div id="cookieConsent">
     Situs ini menggunakan cookie untuk meningkatkan pengalaman Anda. <button onclick="acceptCookies()">Saya Setuju</button>
   </div>
-  <!-- Login/Signup Modal (Sederhana) -->
   <div id="loginModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:2000;align-items:center;justify-content:center;">
     <div style="background:#fff;padding:2rem 1.5rem;border-radius:16px;max-width:350px;width:90%;position:relative;">
       <button onclick="closeLoginForm()" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.4rem;cursor:pointer;">&times;</button>
@@ -372,6 +480,22 @@
     </div>
   </div>
   <script>
+    // Hamburger menu logic
+    const hamburger = document.getElementById('hamburgerBtn');
+    const nav = document.getElementById('mainNav');
+    hamburger.addEventListener('click', function() {
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('active');
+    });
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth <= 700) {
+        if (!nav.contains(e.target) && !hamburger.contains(e.target)) {
+          nav.classList.remove('active');
+          hamburger.classList.remove('active');
+        }
+      }
+    });
+
     // Folder/collapsible logic
     function toggleFolder(id) {
       var section = document.getElementById(id);
@@ -388,9 +512,9 @@
     setInterval(updateDigitalClock, 1000);
     updateDigitalClock();
 
-    // ========== BUDGET DATA LOCAL STORAGE & CHART ==========
-    let budgetData = localStorage.getItem('budgetData')
-      ? JSON.parse(localStorage.getItem('budgetData'))
+    // ========== BUDGET DATA LOCAL STORAGE & CHART + EDIT/DELETE ==========
+    let budgetData = localStorage.getItem('budgetData') 
+      ? JSON.parse(localStorage.getItem('budgetData')) 
       : [];
     let inputDataChart;
 
@@ -448,13 +572,17 @@
     function renderDataTable() {
       const tbody = document.getElementById('dataTable').querySelector('tbody');
       tbody.innerHTML = '';
-      budgetData.forEach(function(item) {
+      budgetData.forEach(function(item, idx) {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td style="padding:8px;border-bottom:1px solid #eee;">${item.tanggal}</td>
           <td style="padding:8px;border-bottom:1px solid #eee;">${item.kategori}</td>
           <td style="padding:8px;border-bottom:1px solid #eee;">${item.tipe}</td>
           <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">Rp ${parseInt(item.jumlah).toLocaleString('id-ID')}</td>
+          <td style="padding:8px;border-bottom:1px solid #eee;">
+            <button class="btn" onclick="editDataRow(${idx})">Edit</button>
+            <button class="btn" style="background:#d32f2f;color:#fff;" onclick="deleteDataRow(${idx})">Delete</button>
+          </td>
         `;
         tbody.appendChild(row);
       });
@@ -474,153 +602,27 @@
       document.getElementById('dataForm').reset();
       return false;
     }
-    // ========== END BUDGET DATA LOCAL STORAGE & CHART ==========
 
-    // Chart.js Budget vs Expenses (dummy data untuk chart utama)
-    document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('budgetFolder').classList.add('open');
+    function deleteDataRow(idx) {
+      if(confirm('Yakin menghapus data?')) {
+        budgetData.splice(idx, 1);
+        localStorage.setItem('budgetData', JSON.stringify(budgetData));
+        renderDataTable();
+      }
+    }
+
+    function editDataRow(idx) {
+      const item = budgetData[idx];
+      document.getElementById('tanggal').value = item.tanggal;
+      document.getElementById('kategori').value = item.kategori;
+      document.getElementById('tipe').value = item.tipe;
+      document.getElementById('jumlah').value = item.jumlah;
+      budgetData.splice(idx, 1);
+      localStorage.setItem('budgetData', JSON.stringify(budgetData));
       renderDataTable();
-      renderCalendar();
-    });
-    const ctx = document.getElementById('budgetExpensesChart').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Januari', 'Februari', 'Maret', 'April'],
-        datasets: [
-          {
-            label: 'Budget',
-            data: [4000000, 4200000, 4100000, 4300000],
-            backgroundColor: 'rgba(54, 162, 235, 0.7)'
-          },
-          {
-            label: 'Expenses',
-            data: [3800000, 4500000, 4000000, 4200000],
-            backgroundColor: 'rgba(255, 99, 132, 0.7)'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: false }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              callback: function(value) {
-                return 'Rp ' + value.toLocaleString('id-ID');
-              }
-            }
-          }
-        }
-      }
-    });
-
-    // Sidebar: Kalender Widget Sederhana
-    function renderCalendar() {
-      const now = new Date();
-      const month = now.toLocaleString('id-ID', { month: 'long' });
-      const year = now.getFullYear();
-      document.getElementById('calendarWidget').innerHTML = `<span style="font-weight:bold;">${month}</span> ${year}`;
     }
 
-    // Cookie Consent
-    function acceptCookies() {
-      document.getElementById('cookieConsent').style.display = 'none';
-      localStorage.setItem('cookieConsent', 'true');
-    }
-    window.onload = function() {
-      if (!localStorage.getItem('cookieConsent')) {
-        document.getElementById('cookieConsent').style.display = 'block';
-      }
-      renderFileManager();
-    };
-
-    // Login/Signup Modal
-    function showLoginForm() {
-      document.getElementById('loginModal').style.display = 'flex';
-      document.getElementById('signupModal').style.display = 'none';
-    }
-    function closeLoginForm() {
-      document.getElementById('loginModal').style.display = 'none';
-    }
-    function showSignupForm() {
-      document.getElementById('signupModal').style.display = 'flex';
-      document.getElementById('loginModal').style.display = 'none';
-    }
-    function closeSignupForm() {
-      document.getElementById('signupModal').style.display = 'none';
-    }
-    // Validasi Login
-    function validateLoginForm() {
-      let email = document.getElementById('loginEmail').value.trim();
-      let pass = document.getElementById('loginPassword').value;
-      let error = '';
-      if (!email || !pass) error = 'Semua field wajib diisi!';
-      else if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) error = 'Email tidak valid!';
-      if (error) {
-        document.getElementById('loginError').textContent = error;
-        return false;
-      }
-      document.getElementById('loginError').textContent = '';
-      alert('Login berhasil (simulasi)');
-      closeLoginForm();
-      return false;
-    }
-    // Validasi Signup
-    function validateSignupForm() {
-      let nama = document.getElementById('signupName').value.trim();
-      let email = document.getElementById('signupEmail').value.trim();
-      let pass = document.getElementById('signupPassword').value;
-      let pass2 = document.getElementById('signupPassword2').value;
-      let error = '';
-      if (!nama || !email || !pass || !pass2) error = 'Semua field wajib diisi!';
-      else if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) error = 'Email tidak valid!';
-      else if (pass.length < 6) error = 'Password minimal 6 karakter!';
-      else if (pass !== pass2) error = 'Konfirmasi password tidak sama!';
-      if (error) {
-        document.getElementById('signupError').textContent = error;
-        return false;
-      }
-      document.getElementById('signupError').textContent = '';
-      alert('Pendaftaran berhasil (simulasi)');
-      closeSignupForm();
-      return false;
-    }
-    // Validasi Form Kontak
-    function validateContactForm() {
-      let nama = document.getElementById('contactName').value.trim();
-      let email = document.getElementById('contactEmail').value.trim();
-      let msg = document.getElementById('contactMsg').value.trim();
-      let error = '';
-      if (!nama || !email || !msg) error = 'Semua field wajib diisi!';
-      else if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) error = 'Email tidak valid!';
-      if (error) {
-        document.getElementById('contactError').textContent = error;
-        return false;
-      }
-      document.getElementById('contactError').textContent = '';
-      alert('Pesan Anda terkirim! (simulasi)');
-      document.getElementById('contactForm').reset();
-      return false;
-    }
-    // Newsletter
-    function subscribeNewsletter(e) {
-      e.preventDefault();
-      let email = document.getElementById('newsletterEmail').value.trim();
-      if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
-        alert('Email tidak valid!');
-        return false;
-      }
-      alert('Terima kasih telah berlangganan!');
-      document.getElementById('newsletterEmail').value = '';
-      return false;
-    }
-
-    // ========================== FILE MANAGER SCRIPT ==========================
+    // ========== FILE MANAGER SCRIPT ==========
     let fileSystem;
     if (localStorage.getItem('fileSystem')) {
       fileSystem = JSON.parse(localStorage.getItem('fileSystem'));
@@ -630,6 +632,7 @@
       ];
     }
     let currentPath = ['Root'];
+
     function saveFileSystem() {
       function stripFileObj(node) {
         if (Array.isArray(node)) {
@@ -643,6 +646,7 @@
       stripFileObj(temp);
       localStorage.setItem('fileSystem', JSON.stringify(temp));
     }
+
     function renderFileManager() {
       const tree = document.getElementById('fileManagerTree');
       let node = fileSystem[0];
@@ -664,6 +668,7 @@
       `;
       renderFolderList(node);
     }
+
     function renderFolderList(node, filterText = '') {
       const ul = document.getElementById('folderList');
       if (!ul) return;
@@ -674,30 +679,54 @@
       }
       ul.innerHTML = items.map((item, idx) =>
         item.isDirectory
-          ? `<li><span style="color:#2155cd;cursor:pointer;" onclick="openFolder('${item.name}')">📁 ${item.name}</span></li>`
+          ? `<li>
+              <span style="color:#2155cd;cursor:pointer;" onclick="openFolder('${item.name}')">📁 ${item.name}</span>
+              <button class="btn" style="margin-left:8px;background:#d32f2f;color:#fff;padding:2px 10px;font-size:0.95em;" onclick="deleteFileOrFolder(${idx})">Delete</button>
+            </li>`
           : item.name.match(/\.(xlsx|xls|csv)$/i)
-            ? `<li><span style="color:#2b9348;cursor:pointer;text-decoration:underline;" onclick="openExcelFile(${idx})">📄 ${item.name}</span> <span style="color:#888;font-size:0.9em;">(${item.size ? item.size + ' bytes' : ''})</span></li>`
-            : `<li>📄 ${item.name} <span style="color:#888;font-size:0.9em;">(${item.size ? item.size + ' bytes' : ''})</span></li>`
+            ? `<li>
+                <span style="color:#2b9348;cursor:pointer;text-decoration:underline;" onclick="openExcelFile(${idx})">📄 ${item.name}</span>
+                <span style="color:#888;font-size:0.9em;">(${item.size ? item.size + ' bytes' : ''})</span>
+                <button class="btn" style="margin-left:8px;background:#d32f2f;color:#fff;padding:2px 10px;font-size:0.95em;" onclick="deleteFileOrFolder(${idx})">Delete</button>
+              </li>`
+            : `<li>
+                📄 ${item.name} <span style="color:#888;font-size:0.9em;">(${item.size ? item.size + ' bytes' : ''})</span>
+                <button class="btn" style="margin-left:8px;background:#d32f2f;color:#fff;padding:2px 10px;font-size:0.95em;" onclick="deleteFileOrFolder(${idx})">Delete</button>
+              </li>`
       ).join('');
     }
+
     function filterFolder() {
-      let q = document.getElementById('folderSearch').value.trim().toLowerCase();
+      let search = document.getElementById('folderSearch').value;
       let node = fileSystem[0];
       for (let i = 1; i < currentPath.length; i++) {
         node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
         if (!node) return;
       }
-      renderFolderList(node, q);
+      renderFolderList(node, search);
     }
+
     function resetFolderSearch() {
       document.getElementById('folderSearch').value = '';
-      filterFolder();
+      renderFileManager();
     }
-    document.addEventListener('input', function(e){
-      if(e.target && e.target.id === 'folderSearch'){
-        filterFolder();
+
+    function createFolder() {
+      let folderName = prompt('Nama folder baru:');
+      if (!folderName) return;
+      let node = fileSystem[0];
+      for (let i = 1; i < currentPath.length; i++) {
+        node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
+        if (!node) return;
       }
-    });
+      if (node.items.some(item => item.isDirectory && item.name === folderName)) {
+        alert('Folder sudah ada!');
+        return;
+      }
+      node.items.push({ name: folderName, isDirectory: true, items: [] });
+      saveFileSystem();
+      renderFileManager();
+    }
     function goUp() {
       if (currentPath.length > 1) {
         currentPath.pop();
@@ -717,22 +746,6 @@
       } else {
         alert("Folder tidak ditemukan!");
       }
-    }
-    function createFolder() {
-      let folderName = prompt('Nama folder baru:');
-      if (!folderName) return;
-      let node = fileSystem[0];
-      for (let i = 1; i < currentPath.length; i++) {
-        node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
-        if (!node) return;
-      }
-      if (node.items.some(item => item.isDirectory && item.name === folderName)) {
-        alert('Folder sudah ada!');
-        return;
-      }
-      node.items.push({ name: folderName, isDirectory: true, items: [] });
-      saveFileSystem();
-      renderFileManager();
     }
     function uploadFiles(event) {
       let files = event.target.files;
@@ -808,10 +821,103 @@
       `;
       document.body.appendChild(modal);
     }
-    // ======================== END FILE MANAGER SCRIPT ========================
+    function deleteFileOrFolder(idx) {
+      let node = fileSystem[0];
+      for (let i = 1; i < currentPath.length; i++) {
+        node = node.items.find(item => item.isDirectory && item.name === currentPath[i]);
+        if (!node) return;
+      }
+      if (confirm('Yakin ingin menghapus item ini?')) {
+        node.items.splice(idx, 1);
+        saveFileSystem();
+        renderFileManager();
+      }
+    }
+
+    // ========== MODAL & FORM ==========
+    function showLoginForm() {
+      document.getElementById('loginModal').style.display = 'flex';
+    }
+    function closeLoginForm() {
+      document.getElementById('loginModal').style.display = 'none';
+    }
+    function showSignupForm() {
+      document.getElementById('signupModal').style.display = 'flex';
+      closeLoginForm();
+    }
+    function closeSignupForm() {
+      document.getElementById('signupModal').style.display = 'none';
+    }
+    function validateLoginForm() {
+      // Dummy validation
+      let email = document.getElementById('loginEmail').value;
+      let pass = document.getElementById('loginPassword').value;
+      if (!email || !pass) {
+        document.getElementById('loginError').textContent = 'Semua field wajib diisi!';
+        return false;
+      }
+      document.getElementById('loginError').textContent = '';
+      closeLoginForm();
+      return false;
+    }
+    function validateSignupForm() {
+      let name = document.getElementById('signupName').value;
+      let email = document.getElementById('signupEmail').value;
+      let pass = document.getElementById('signupPassword').value;
+      let pass2 = document.getElementById('signupPassword2').value;
+      if (!name || !email || !pass || !pass2) {
+        document.getElementById('signupError').textContent = 'Semua field wajib diisi!';
+        return false;
+      }
+      if (pass !== pass2) {
+        document.getElementById('signupError').textContent = 'Password tidak sama!';
+        return false;
+      }
+      document.getElementById('signupError').textContent = '';
+      closeSignupForm();
+      return false;
+    }
+    function validateContactForm() {
+      let name = document.getElementById('contactName').value;
+      let email = document.getElementById('contactEmail').value;
+      let msg = document.getElementById('contactMsg').value;
+      if (!name || !email || !msg) {
+        document.getElementById('contactError').textContent = 'Semua field wajib diisi!';
+        return false;
+      }
+      document.getElementById('contactError').textContent = '';
+      alert('Pesan berhasil dikirim!');
+      document.getElementById('contactForm').reset();
+      return false;
+    }
+    function subscribeNewsletter(event) {
+      event.preventDefault();
+      let email = document.getElementById('newsletterEmail').value;
+      if (!email) return false;
+      alert('Terima kasih telah berlangganan!');
+      document.getElementById('newsletterEmail').value = '';
+      return false;
+    }
+    // Cookie Consent
+    function acceptCookies() {
+      document.getElementById('cookieConsent').style.display = 'none';
+      localStorage.setItem('cookieAccepted', '1');
+    }
+    if (!localStorage.getItem('cookieAccepted')) {
+      document.getElementById('cookieConsent').style.display = 'block';
+    }
+
+    // Inisialisasi
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('budgetFolder').classList.add('open');
+      renderDataTable();
+      renderFileManager();
+      // Tambahkan fungsi renderCalendar() jika ada implementasi kalender
+    });
   </script>
 </body>
 </html>
+
 
 
 
